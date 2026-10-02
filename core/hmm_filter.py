@@ -36,7 +36,7 @@ class HMMStateEstimator:
         # P(X_t | e_{1:t-1}) = sum_{X_{t-1}} P(X_t | X_{t-1}, action) * P(X_{t-1} | e_{1:t-1})
         # Hint: Use np.dot or matrix multiplication with self.T[action]
         
-        predicted_belief = np.copy(self.belief_state) # Placeholder
+        predicted_belief = self.belief_state @ self.T[action] # Placeholder
         return predicted_belief
 
     def update(self, observation: int, predicted_belief: np.ndarray) -> np.ndarray:
@@ -52,7 +52,9 @@ class HMMStateEstimator:
         # 2. Compute normalization constant Z = sum(updated_belief)
         # 3. Normalize the state distribution vector
         
-        updated_belief = predicted_belief # Placeholder
+        updated_belief = predicted_belief * self.E[observation]
+        Z = np.sum(updated_belief)
+        updated_belief = updated_belief / Z # Placeholder
         return updated_belief
         
     def bayesian_filter_step(self, action: int, observation: int) -> np.ndarray:

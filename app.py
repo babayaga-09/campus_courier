@@ -13,6 +13,7 @@ import streamlit as st
 
 import agent
 import memory
+import perception
 import wandb_log
 import world
 
@@ -37,7 +38,7 @@ LAYERS = [
     ("A* routing", "live"),
     ("SQLite memory", "live"),
     ("Live dashboard", "live"),
-    ("HMM localisation", "next"),
+    ("HMM localisation (Lab 2 filter)", "live"),
     ("Adaptive pilot (MDP + RL)", "planned"),
     ("Corridor B conflict (self-play)", "planned"),
 ]
@@ -220,6 +221,38 @@ def step_html(i, entry):
             f"<details{is_open}><summary>Observation</summary><pre>{obs}</pre></details></div></div>")
 
 
+@st.cache_data(show_spinner=False)
+def belief_walk(robot_id, path):
+    """Cached so dragging the step slider does not re-run the filter every time."""
+    return perception.walk([tuple(p) for p in path], seed=0)
+
+
+def belief_figure(snap):
+    """The belief over cells, with the true position marked so drift is visible."""
+    belief = snap["belief"]
+    walls = [[1 if c == "#" else 0 for c in row] for row in world.ROWS]
+    shown = [[None if walls[r][c] else float(belief[r][c]) for c in range(len(walls[0]))]
+             for r in range(len(walls))]
+
+    fig = go.Figure(go.Heatmap(
+        z=shown, colorscale=[[0, "#15140F"], [0.25, "#3A3524"], [0.6, "#A57B1E"], [1, "#F2B233"]],
+        showscale=False, hoverinfo="skip", xgap=1, ygap=1, zmin=0,
+        zmax=max(float(belief.max()), 1e-6)))
+    tx, ty = snap["true"]
+    gx, gy = snap["guess"]
+    fig.add_trace(go.Scatter(x=[gx], y=[gy], mode="markers", name="filter's best guess",
+                             marker=dict(symbol="square-open", size=16, color="#58C4DD", line=dict(width=3))))
+    fig.add_trace(go.Scatter(x=[tx], y=[ty], mode="markers", name="actually here",
+                             marker=dict(symbol="x", size=13, color="#F58B7C", line=dict(width=3))))
+    fig.update_yaxes(autorange="reversed", scaleanchor="x", constrain="domain", visible=False)
+    fig.update_xaxes(constrain="domain", visible=False)
+    fig.update_layout(height=320, margin=dict(l=0, r=0, t=10, b=0), paper_bgcolor="rgba(0,0,0,0)",
+                      plot_bgcolor="rgba(0,0,0,0)", font=dict(family="Archivo, sans-serif", color="#A8A093"),
+                      legend=dict(orientation="h", y=-0.04, x=0, font=dict(size=13)),
+                      hoverlabel=dict(bgcolor="#221F1A", bordercolor="#2E2A24", font=dict(color="#ECE6DB")))
+    return fig
+
+
 def campus_figure(result):
     z = [[1 if c == "#" else 2 if c == "~" else 3 if c == "g" else 0 for c in row] for row in world.ROWS]
     scale = [[0, "#3A342C"], [.25, "#3A342C"], [.25, "#0A0908"], [.5, "#0A0908"],
@@ -368,6 +401,31 @@ with map_col:
   <span><i style="background:#1F5673"></i>Just mopped, wheels slip</span><span><i style="background:#6E6A1C"></i>Quiet zone, silent wheels only</span>
   <span><i style="background:#100F0D;border-color:#F2B233;transform:rotate(45deg) scale(.8)"></i>Location</span>
 </div>""", unsafe_allow_html=True)
+
+    # Perception: the Lab 2 forward filter run over the route the planner produced.
+    if result and result.get("assignments"):
+        rid = sorted(set(result["assignments"].values()))[0]
+        route = result.get("routes", {}).get(rid)
+        if route and len(route.get("path", [])) > 1:
+            st.markdown("<div class='panel-title'><h3>Where does it think it is?</h3>"
+                        "<small>HMM belief, Lab 2 forward filter</small></div>", unsafe_allow_html=True)
+            snapshots = belief_walk(rid, tuple(map(tuple, route["path"])))
+            stats = perception.summary(snapshots)
+            step = st.slider("Step along the route", 1, len(snapshots), len(snapshots),
+                             key="belief_step", label_visibility="collapsed")
+            snap = snapshots[step - 1]
+            st.plotly_chart(belief_figure(snap), width="stretch", config={"displayModeBar": False})
+            st.markdown(
+                f"<div class='legend'><span>Step <b>{step}</b> of {len(snapshots)}</span>"
+                f"<span>Wall count seen: <b>{snap['observation']}</b></span>"
+                f"<span>Most likely cell: <b>{snap['guess']}</b></span>"
+                f"<span>Actually at: <b>{snap['true']}</b></span>"
+                f"<span>Confidence <b>{snap['belief'].max():.0%}</b></span></div>"
+                f"<div class='empty'>Over the whole route the filter named the exact cell "
+                f"<b>{stats['hit_rate']:.0%}</b> of the time and came within one cell "
+                f"<b>{stats['near_rate']:.0%}</b> of the time. The belief spreads on every move, "
+                f"because the floor can make the wheels slip, and sharpens whenever a wall count "
+                f"rules cells out.</div>", unsafe_allow_html=True)
 
 if SHOW_FULL:  # the database view number of supplies and weight
     st.write("")

@@ -18,7 +18,7 @@ gates in code decide whether that plan is allowed to happen.
 
 ```bash
 git clone <YOUR GITHUB URL>
-cd DeepRescue
+cd CampusCourier
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
@@ -77,6 +77,7 @@ alone would allow, and quiet-zone avoidance.
 | `agent.py` | The ReAct loop, the tool definitions, the three verification gates, and the offline scripted stories used when there is no API key. |
 | `world.py` | The campus floor map as ASCII, plus the adapters that feed it to the Lab 1 A* planner. Masks the quiet-zone cells for robots without silent wheels. |
 | `memory.py` | SQLite state: the `robots`, `supplies` and `tasks` tables, the seed data, and `record_dispatch()`. |
+| `perception.py` | Runs the Lab 2 forward filter over the campus floor: builds the transition and emission models from the map, simulates a noisy walk along a planned route, and returns the belief for the dashboard heatmap. No algorithm here, only the translation between the map and the shapes the lab code expects. |
 | `wandb_log.py` | Optional Weights & Biases logging of each run. Off unless `WANDB_ENABLED=1`. |
 | `test_agent.py` | The seven safety checks described above. |
 | `ui_prototype.py`, `UI_Draft.html` | An early Tkinter prototype and a wireframe, kept for history. Not used by the demo. |
@@ -92,7 +93,7 @@ the original labs returns only the corrections listed here.
 | `core/planner.py` | `Lab1.zip` | `Lab1/planner.py` | none, byte identical |
 | `core/environment.py` | `Lab1.zip` | `Lab1/environment.py` | none, byte identical |
 | `core/models.py` | `Lab1.zip` | `Lab1/models.py` | none, byte identical |
-| `core/hmm_filter.py` | `Lab2.zip` | `Lab2/hmm_filter.py` | `predict()` and `update()` are the lab's own TODOs, still to be completed |
+| `core/hmm_filter.py` | `Aryan_Grang_Lab2.zip` | `Lab2/hmm_filter.py` | my completed Lab 2 submission, dropped in as submitted. It passes the lab's own `hmm_test.py` (3 tests) |
 | `core/hmm_environment.py` | `Lab2.zip` | `Lab2/hmm_environment.py` | whitespace only, the tab and space mix made it un-importable |
 | `core/verifier.py` | `Lab(Updated).zip` | `Lab/verifier.py` | Task 0 fixed (capacity `>=` to `<=`), and Task 4's `battery_drain_constraint` implemented |
 
@@ -177,9 +178,16 @@ verifier attempts, whether it dispatched, items assigned, robots used and total 
 
 Known limitations in this version:
 
-- **Perception is not wired into the demo.** The HMM filter exists, but the dashboard still shows true
-  robot positions rather than a belief distribution, so the demo does not yet show localisation under
-  noise.
+- **The filter tracks loosely, which is the honest result.** A wall count from 0 to 4 is weak evidence in
+  a corridor grid where many cells look alike, so the belief names the exact cell roughly 45 to 70% of the
+  time and lands within one cell roughly 75 to 80% of the time, depending on the route. It is a real
+  forward filter, not a demonstration rigged to look confident.
+- **The belief starts at the known dock, not uniform.** The robot undocks from a known room, so
+  `perception.py` seeds the belief on that cell. With a uniform prior over the whole floor, which is the
+  harder "woken up lost" problem, tracking drops to around 28%.
+- **The true path does not slip, but the filter assumes it might.** The simulated robot follows the A*
+  route exactly, while the transition model allows sideways slips, so the belief spreads more than the
+  truth does.
 - **The quiet-zone rule is enforced in the map, not in the solver.** Cells are removed before A* plans.
   That makes an illegal route impossible to produce, but the rule is not stated as a Z3 constraint, so it
   is not part of the formal proof.

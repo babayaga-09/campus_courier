@@ -273,9 +273,9 @@ function arrow(s, x, y, w, color) {
   const ly = 1.95;
   s.addShape(pres.shapes.LINE, { x: M + 0.1, y: ly, w: W - 2 * M - 0.2, h: 0, line: { color: K.rule, width: 2 } });
   const items = [
-    ["20–23 Sep", "Perception + new Z3 rules", "HMM belief heatmap on the map; methane no-spark zone, return-trip battery, Shaft B exclusion"],
-    ["24–26 Sep", "Adaptive pilot", "Value iteration for flooded floors; Q-learning for fast vs careful driving"],
-    ["27–28 Sep", "Shaft B conflict (bonus)", "Two robots learn right-of-way through self-play Q-learning"],
+    ["20 to 23 Sep", "Perception + new Z3 rules", "HMM belief heatmap on the map; methane no-spark zone, return-trip battery, Shaft B exclusion"],
+    ["24 to 26 Sep", "Adaptive pilot", "Value iteration for flooded floors; Q-learning for fast vs careful driving"],
+    ["27 to 28 Sep", "Shaft B conflict (bonus)", "Two robots learn right-of-way through self-play Q-learning"],
     ["30 Sep", "Final submission", "All six layers integrated, documentation and presentation"],
   ];
   items.forEach(([when, h, d], i) => {
