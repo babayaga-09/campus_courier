@@ -37,10 +37,14 @@ cannot talk its way past them. Before any dispatch, the solver has to agree that
    `battery - drain_rate * load >= min_battery`. This matters because a robot can be strong enough to
    lift a load and still not have the charge to carry it.
 4. **Quiet zone.** A robot without silent wheels may not be routed through the corridor outside the
-   exam hall. I enforce this in the map rather than in the prompt, because those cells are removed
-   from the grid before A* even plans, so an illegal route cannot be produced in the first place.
-5. **Return reserve.** There has to be enough battery to reach the room and get back to the Supply
-   Room.
+   exam hall. To be precise about where this one lives: it is enforced in the map, not in the solver.
+   Those cells are removed from the grid before A* plans, so an illegal route cannot be produced, and
+   the tests check it. It is not part of the Z3 formula, so Z3 does not prove it.
+Not yet enforced, and I am listing it here rather than quietly leaving it out: a **return reserve**, so
+that there is enough battery to reach the room and get back to the Supply Room. The drain constraint
+above is charged against the load, not against route distance, so the solver currently proves the
+outbound trip only. Adding it means encoding route length into the solver, which is the first thing I
+would do next.
 
 When Z3 returns UNSAT it also reports which constraint failed, so the model has something concrete to
 replan around, and resubmitting a plan that has already been rejected is blocked. This is the
