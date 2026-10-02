@@ -57,10 +57,50 @@ def log_run(order, run, engine="unknown"):
         return None
 
 
-if __name__ == "__main__":  # smoke check with a fake run, no network needed
-    fake = {"ok": True, "assignments": {"projector#1": "CB-1"}, "routes": {"CB-1": {"steps": 29}},
-            "trace": [{"flag": "ok"}, {"flag": "unsat"}, {"flag": "sat"}, {"flag": "finish"}]}
-    m = summarise("test order", fake)
-    assert m["steps_taken"] == 4 and m["z3_unsat"] == 1 and m["verifier_attempts"] == 2
-    assert m["dispatched"] == 1 and m["total_route_steps"] == 29
-    print("ok:", m)
+def log_demo_runs():
+    """
+    Replay the three offline stories and log each one. Needs `wandb login` first.
+
+        python wandb_log.py --demo
+
+    Used to produce the W&B report linked in the README, so a marker can see the
+    numbers without running anything.
+    """
+    import os
+    import tempfile
+    from pathlib import Path
+
+    import memory
+    memory.DB_PATH = Path(tempfile.gettempdir()) / "campuscourier_wandb.db"
+    import agent
+
+    os.environ["WANDB_ENABLED"] = "1"
+    stories = [
+        ("routine", lambda: agent.scripted_delivery(),
+         "Get 2 projectors and a lab kit to Studio 3 before the 2pm class."),
+        ("overload", lambda: agent.scripted_delivery(overloaded=True),
+         "Send 3 projectors and the whiteboard to Studio 3, fast."),
+        ("low_battery", lambda: agent.scripted_low_battery(),
+         "Use Pixel to carry a lab kit to the Library."),
+    ]
+    for name, make_llm, order in stories:
+        memory.DB_PATH.unlink(missing_ok=True)
+        memory.reset()
+        run = agent.run_agent(make_llm(), order)
+        url = log_run(order, run, engine=f"offline:{name}")
+        print(f"{name}: dispatched={run['ok']} -> {url or 'not logged'}")
+    memory.DB_PATH.unlink(missing_ok=True)
+
+
+if __name__ == "__main__":
+    import sys
+
+    if "--demo" in sys.argv:
+        log_demo_runs()
+    else:  # smoke check with a fake run, no network needed
+        fake = {"ok": True, "assignments": {"projector#1": "CB-1"}, "routes": {"CB-1": {"steps": 29}},
+                "trace": [{"flag": "ok"}, {"flag": "unsat"}, {"flag": "sat"}, {"flag": "finish"}]}
+        m = summarise("test order", fake)
+        assert m["steps_taken"] == 4 and m["z3_unsat"] == 1 and m["verifier_attempts"] == 2
+        assert m["dispatched"] == 1 and m["total_route_steps"] == 29
+        print("ok:", m)

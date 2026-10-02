@@ -168,7 +168,17 @@ wandb login
 Each dispatch logs: steps taken, tool calls, Z3 SAT and UNSAT counts, gate blocks, schema errors,
 verifier attempts, whether it dispatched, items assigned, robots used and total route steps.
 
-**Report link:** <!-- TODO: paste your W&B project or report URL here -->
+To reproduce the logged runs for all three stories in one go:
+
+```bash
+python wandb_log.py --demo
+```
+
+**Project:** <https://wandb.ai/aryangrang-krea-university/campuscourier>
+
+The three runs there are the routine dispatch (dispatched, one Z3 SAT), the overload
+(dispatched after one Z3 UNSAT and a replan, so two verifier attempts), and the low-battery
+trap (not dispatched, one Z3 UNSAT, which is the correct outcome).
 
 ---
 
