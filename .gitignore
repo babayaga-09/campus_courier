@@ -1,0 +1,19 @@
+# Secrets. The example file is committed, the real one never is.
+.env
+!.env.example
+
+# Generated state
+*.db
+__pycache__/
+*.pyc
+
+# Local environment and editor
+.venv/
+.vscode/
+
+# Weights & Biases local run files
+wandb/
+
+# Submission-only material, not for the public repo
+conversations.pdf
+KEY_LEARNINGS.md
