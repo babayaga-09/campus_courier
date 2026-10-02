@@ -3,8 +3,9 @@
 An LLM coordinator for campus delivery robots, where **every dispatch plan must be proved safe by a Z3
 solver before a robot moves**.
 
-<!-- TODO: record demo.gif (15 seconds: Reset campus state, then Overload) and it will appear here -->
-![Demo: Z3 refuses an overloaded plan, the coordinator drops an item and retries](demo.gif)
+<!-- Demo GIF: record 15 seconds (Reset campus state, then Overload), save as demo.gif beside this
+     README, and uncomment the line below. -->
+<!-- ![Demo: Z3 refuses an overloaded plan, the coordinator drops an item and retries](demo.gif) -->
 
 Three courier robots carry projectors, lab kits and water cases from the Supply Room to the rooms that
 asked for them. Staff type an order in plain English. An LLM turns it into a structured plan, and three
@@ -17,8 +18,8 @@ gates in code decide whether that plan is allowed to happen.
 ## Install and run
 
 ```bash
-git clone <YOUR GITHUB URL>
-cd CampusCourier
+git clone https://github.com/AgentsDecisionMaking-Krea/Comp-343-2026-s006.git
+cd Comp-343-2026-s006/FinalProject-CampusCourier
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
@@ -224,4 +225,4 @@ Safety considerations:
 
 ## Repository
 
-**GitHub:** <!-- TODO: paste your repository URL here -->
+**GitHub:** <https://github.com/AgentsDecisionMaking-Krea/Comp-343-2026-s006/tree/main/FinalProject-CampusCourier>
