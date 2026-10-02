@@ -175,7 +175,7 @@ To reproduce the logged runs for all three stories in one go:
 python wandb_log.py --demo
 ```
 
-**Project:** <https://wandb.ai/aryangrang-krea-university/campuscourier>
+**Project:** <https://wandb.ai/harsh_dixit-sias22-krea-university-top-university-for-li/campuscourier>
 
 The three runs there are the routine dispatch (dispatched, one Z3 SAT), the overload
 (dispatched after one Z3 UNSAT and a replan, so two verifier attempts), and the low-battery

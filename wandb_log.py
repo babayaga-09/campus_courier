@@ -47,7 +47,8 @@ def log_run(order, run, engine="unknown"):
 
     metrics = summarise(order, run)
     try:
-        with wandb.init(project=os.getenv("WANDB_PROJECT", "campuscourier"),
+        with wandb.init(entity=os.getenv("WANDB_ENTITY") or None,  # blank means my default account
+                        project=os.getenv("WANDB_PROJECT", "campuscourier"),
                         config={"engine": engine, "order": order},
                         reinit=True) as session:
             session.log(metrics)
