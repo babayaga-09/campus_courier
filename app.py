@@ -1,5 +1,5 @@
 """
-app.py -- CampusCourier live command dashboard.   Run:  streamlit run app.py
+app.py: CampusCourier live command dashboard.   Run:  streamlit run app.py
 Theme tokens live in .streamlit/config.toml; this file adds the component CSS.
 """
 

@@ -1,5 +1,5 @@
 """
-memory.py -- SQLite record of the delivery operation (robots, supplies, task log).
+memory.py: SQLite record of the delivery operation (robots, supplies, task log).
 Same approach as the ReAct lab's fake_db.py: a real on-disk SQLite file,
 rebuilt from seed data by reset().
 """
@@ -21,7 +21,7 @@ CREATE TABLE robots (
     battery_pct INTEGER NOT NULL,
     min_battery INTEGER NOT NULL,
     drain_rate  REAL NOT NULL,      -- battery % used per kg carried
-    quiet_wheels  INTEGER NOT NULL,   -- 1 = certified for quiet zone zones
+    quiet_wheels  INTEGER NOT NULL,   -- 1 = allowed through the quiet zone
     x INTEGER NOT NULL, y INTEGER NOT NULL
 );
 CREATE TABLE supplies (

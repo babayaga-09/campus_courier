@@ -1,5 +1,5 @@
 """
-world.py -- the campus floor map, and thin adapters that feed it to the
+world.py: the campus floor map, and thin adapters that feed it to the
 reused lab algorithms in core/. No algorithm logic lives here.
 
 """

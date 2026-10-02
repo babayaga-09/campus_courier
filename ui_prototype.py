@@ -1,5 +1,5 @@
 """
-ui_prototype.py -- GUI prototype for the proposal review (NOT the finished system).
+ui_prototype.py: GUI prototype for the proposal review (NOT the finished system).
 
 Tkinter only, so it runs with a plain `python ui_prototype.py`: no Streamlit, no
 solver, no LLM. The panels draw canned data. Anything tagged TODO in the window
@@ -55,7 +55,7 @@ ROUTINE = [
 OVERLOAD = [
     ("tool", "get_fleet_status", "usable capacity 50kg (CB-1 30 + CB-2 20)"),
     ("tool", "get_inventory", "3 projectors 24kg + whiteboard 30kg = 54kg"),
-    ("unsat", "verify_dispatch_smt", "54kg requested > 50kg usable -- UNSAT"),
+    ("unsat", "verify_dispatch_smt", "54kg requested > 50kg usable, UNSAT"),
     ("note", "replan", "oxygen is life-critical, so drop the whiteboard"),
     ("sat", "verify_dispatch_smt", "3 projectors -> CB-1, CB-2"),
     ("done", "finish", "dispatched, whiteboard left at Supply Room"),
@@ -72,7 +72,7 @@ TAGS = {
 class Prototype(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("CampusCourier -- Campus Delivery Desk  [UI prototype v0.1]")
+        self.title("CampusCourier: Campus Delivery Desk  [UI prototype v0.1]")
         self.configure(bg=BG)
         self.geometry("980x660")
         self.minsize(860, 600)
@@ -86,19 +86,19 @@ class Prototype(tk.Tk):
         self._order()
         self._statusbar()
 
-    # -- header ------------------------------------------------------------
+    # header ------------------------------------------------------------
     def _header(self):
         bar = tk.Frame(self, bg=BG)
         bar.pack(fill="x", padx=14, pady=(12, 8))
         tk.Label(bar, text="MINE RESCUE COMMAND", bg=BG, fg=INK,
                  font=("Segoe UI", 18, "bold")).pack(side="left")
-        tk.Label(bar, text="  UI PROTOTYPE v0.1 -- panels marked TODO are not wired up yet",
+        tk.Label(bar, text="  UI PROTOTYPE v0.1: panels marked TODO are not wired up yet",
                  bg=BG, fg=ACCENT, font=("Segoe UI", 9, "bold")).pack(side="left", pady=(6, 0))
         self.verdict = tk.Label(bar, text="last Z3 verdict: none yet", bg=BG, fg=PENCIL,
                                 font=("Consolas", 10))
         self.verdict.pack(side="right", pady=(6, 0))
 
-    # -- left: fleet -------------------------------------------------------
+    # left: fleet -------------------------------------------------------
     def _fleet(self, parent):
         box = self._panel(parent, "FLEET", side="left", width=250)
         for rid, name, batt, cap, note in FLEET:
@@ -118,7 +118,7 @@ class Prototype(tk.Tk):
         tk.Label(box, text="live positions: TODO (comes from the HMM filter)",
                  bg="white", fg=ACCENT, font=("Segoe UI", 8)).pack(anchor="w", padx=10, pady=10)
 
-    # -- middle: map -------------------------------------------------------
+    # middle: map -------------------------------------------------------
     def _map(self, parent):
         box = self._panel(parent, "MINE MAP + A* ROUTE", side="left", width=360)
         w, h = len(CAMPUS_MAP[0]) * CELL, len(CAMPUS_MAP) * CELL
@@ -139,7 +139,7 @@ class Prototype(tk.Tk):
         cv.create_line(1.5 * CELL, 1.5 * CELL, 1.5 * CELL, 9.5 * CELL,
                        7.5 * CELL, 9.5 * CELL, 7.5 * CELL, 7.5 * CELL,
                        fill=ACCENT, width=2, dash=(4, 3))
-        self.mapnote = tk.Label(box, text="route shown is a placeholder -- A* not called from here",
+        self.mapnote = tk.Label(box, text="route shown is a placeholder, A* not called from here",
                                 bg="white", fg=ACCENT, font=("Segoe UI", 8))
         self.mapnote.pack(anchor="w", padx=10)
         tk.Label(box, text="B base camp   P pump room   G gallery 3   S shaft B\n"
@@ -149,7 +149,7 @@ class Prototype(tk.Tk):
         tk.Label(box, text="belief heatmap: TODO", bg="white", fg=ACCENT,
                  font=("Segoe UI", 8, "bold")).pack(anchor="w", padx=10, pady=(6, 10))
 
-    # -- right: reasoning log ---------------------------------------------
+    # right: reasoning log ---------------------------------------------
     def _log(self, parent):
         box = self._panel(parent, "COORDINATOR REASONING", side="left", width=320)
         self.text = tk.Text(box, wrap="word", bg="white", fg=INK, relief="flat",
@@ -160,9 +160,9 @@ class Prototype(tk.Tk):
         self.text.tag_configure("body", foreground=PENCIL)
         self._say("note", "no order yet",
                   "type an order below, or press a demo button. "
-                  "this prototype replays a canned trace -- the real loop calls Z3.")
+                  "this prototype replays a canned trace. The real loop calls Z3.")
 
-    # -- bottom: order entry ----------------------------------------------
+    # bottom: order entry ----------------------------------------------
     def _order(self):
         bar = tk.Frame(self, bg=BG)
         bar.pack(fill="x", padx=14, pady=(0, 6))
@@ -183,7 +183,7 @@ class Prototype(tk.Tk):
         tk.Label(bar, text=built, bg="#e9e5dd", fg=OK, font=("Segoe UI", 8)).pack(side="left", padx=10)
         tk.Label(bar, text=todo, bg="#e9e5dd", fg=ACCENT, font=("Segoe UI", 8)).pack(side="right", padx=10)
 
-    # -- helpers -----------------------------------------------------------
+    # helpers -----------------------------------------------------------
     def _panel(self, parent, title, side, width):
         outer = tk.Frame(parent, bg=LINE, padx=1, pady=1)
         outer.pack(side=side, fill="both", expand=True, padx=4)

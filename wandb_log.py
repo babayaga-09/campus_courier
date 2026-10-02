@@ -1,5 +1,5 @@
 """
-wandb_log.py -- optional Weights & Biases logging for CampusCourier runs.
+wandb_log.py: optional Weights & Biases logging for CampusCourier runs.
 
 Off by default. To turn it on:
     pip install wandb
@@ -8,7 +8,7 @@ Off by default. To turn it on:
 
 Every dispatch attempt is logged as one run: how many steps the coordinator took,
 how many Z3 verdicts it got, how often a gate blocked it, and whether the order
-was finally dispatched. Nothing here changes the agent's behaviour -- if wandb is
+was finally dispatched. Nothing here changes the agent's behaviour. If wandb is
 missing, disabled, or offline, log_run() returns silently.
 """
 

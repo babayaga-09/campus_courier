@@ -1,5 +1,5 @@
 """
-agent.py -- the LLM "courier coordinator": a ReAct loop (adapted from the
+agent.py: the LLM "courier coordinator". A ReAct loop (adapted from the
 ReAct lab's run_react_loop) whose tools are the reused lab algorithms.
 
 
@@ -107,7 +107,7 @@ def plan_route_tool(robot_id, destination):
 
 SYSTEM_PROMPT = """You are the courier coordinator for a university campus floor.
 A human commander sends orders in plain language. You dispatch robots carrying
-supplies to the rooms that asked for them, using ONLY tool observations -- never invent numbers.
+supplies to the rooms that asked for them, using ONLY tool observations. Never invent numbers.
 
 Every turn, reply with exactly one JSON object and nothing else:
 {"thought": "<reasoning>", "action": "<action>", "action_input": {...}}
@@ -130,7 +130,7 @@ Actions:
 
 Rules:
 1. After UNSATISFIABLE, read the feedback and diagnostics, then submit a genuinely
-   different payload (e.g. fewer or lighter items) -- never the same one again.
+   different payload (e.g. fewer or lighter items), never the same one again.
    Tell the commander what you dropped and why. Priority when cutting load:
    projector > lab_kit > water_case > marker_box > whiteboard.
 2. Never finish with assignments unless the latest verify_dispatch_smt was SATISFIABLE.
