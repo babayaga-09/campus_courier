@@ -15,6 +15,7 @@ __pycache__/
 wandb/
 
 # Submission-only material, not for the public repo
+*.pdf
 conversations.pdf
 KEY_LEARNINGS.md
 WALKTHROUGH_QUESTIONS.md
