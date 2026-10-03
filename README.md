@@ -175,7 +175,10 @@ To reproduce the logged runs for all three stories in one go:
 python wandb_log.py --demo
 ```
 
+**Report (open to anyone with the link):** <https://forge.coreweave.com/wandb/harsh_dixit-sias22-krea-university-top-university-for-li/campuscourier/reports/CampusCourier-verified-dispatch-runs--VmlldzoxODA0OTM4MA?accessToken=z9is6gbvzf5s5u74ndkgk84kmxruqn395mgs732awlyejsb4siqu3pqvwhkrkt5c>
+
 **Project:** <https://wandb.ai/harsh_dixit-sias22-krea-university-top-university-for-li/campuscourier>
+(the project itself is team-visible; the report link above is the one to use)
 
 The three runs there are the routine dispatch (dispatched, one Z3 SAT), the overload
 (dispatched after one Z3 UNSAT and a replan, so two verifier attempts), and the low-battery
