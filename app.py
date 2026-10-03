@@ -29,9 +29,8 @@ PRESETS = {
     "Overload": "Send 3 projectors and the whiteboard to Studio 3, fast.",
     "Low-battery trap": "Use Pixel to carry a lab kit to the Library.",
 }
-# Demo mode: show only what the presentation brief asks for (GUI, input, one working
-# algorithm, the verification layer). Set True to show the task log, the stock table and
-# the layer roadmap again. Nothing is removed, only hidden.
+# Set False to hide the database views (task log and stock table) and show only the
+# order box, the map, the reasoning panel and the verdict.
 SHOW_FULL = True
 LAYERS = [
     ("LLM coordinator + Z3 safety filter", "live"),
@@ -39,8 +38,6 @@ LAYERS = [
     ("SQLite memory", "live"),
     ("Live dashboard", "live"),
     ("HMM localisation (Lab 2 filter)", "live"),
-    ("Adaptive pilot (MDP + RL)", "planned"),
-    ("Corridor B conflict (self-play)", "planned"),
 ]
 
 st.markdown("""
@@ -78,7 +75,6 @@ header[data-testid="stHeader"]{background:transparent}
 .pill.commit{color:var(--amber); border-color:rgba(242,178,51,.45); background:rgba(242,178,51,.12)}
 .pill.live{color:var(--sat); border-color:rgba(127,217,166,.3); background:transparent}
 .pill.next{color:var(--amber); border-color:rgba(242,178,51,.35); background:transparent}
-.pill.planned{color:var(--faint); border-color:var(--rule); background:transparent}
 
 /* fleet strip */
 .fleet{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; margin:2px 0 16px}
@@ -427,7 +423,7 @@ with map_col:
                 f"because the floor can make the wheels slip, and sharpens whenever a wall count "
                 f"rules cells out.</div>", unsafe_allow_html=True)
 
-if SHOW_FULL:  # the database view number of supplies and weight
+if SHOW_FULL:  # the database views: what was dispatched, and what is left in the store
     st.write("")
     tab_log, tab_stock = st.tabs(["Task log", "Supplies"])
     with tab_log:

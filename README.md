@@ -3,9 +3,7 @@
 An LLM coordinator for campus delivery robots, where **every dispatch plan must be proved safe by a Z3
 solver before a robot moves**.
 
-<!-- Demo GIF: record 15 seconds (Reset campus state, then Overload), save as demo.gif beside this
-     README, and uncomment the line below. -->
-<!-- ![Demo: Z3 refuses an overloaded plan, the coordinator drops an item and retries](demo.gif) -->
+![Demo: Z3 refuses an overloaded plan, the coordinator drops the whiteboard and retries, then refuses a robot below its minimum battery](demo.gif)
 
 Three courier robots carry projectors, lab kits and water cases from the Supply Room to the rooms that
 asked for them. Staff type an order in plain English. An LLM turns it into a structured plan, and three
@@ -106,14 +104,6 @@ Patterns reused rather than files copied:
 | `agent.py` offline engine | `ReAct Lab_Aryan.zip` | `ReAct Lab/scripted_llm.py` | the idea of replaying a fixed step list when there is no API key |
 | `memory.py` | `ReAct Lab_Aryan.zip` | `ReAct Lab/fake_db.py` | the on-disk SQLite seed-and-reset pattern |
 
-Planned layers will reuse, unchanged, from:
-
-| Planned layer | Original lab submission |
-|---|---|
-| Adaptive pilot, value iteration | `Lab_3_Aryan.zip` |
-| Adaptive pilot, Q-learning and the Corridor B self play | `Q learning_Aryan.zip` |
-| Prediction baselines if needed | `RL-Prediction-Lab-1_Aryan_final.zip` |
-
 All of the above zips sit in the parent coursework folder alongside this project.
 
 ### Config and data
@@ -204,8 +194,12 @@ Known limitations in this version:
   That makes an illegal route impossible to produce, but the rule is not stated as a Z3 constraint, so it
   is not part of the formal proof.
 - **No round-trip reserve.** Battery is checked for the outbound trip only.
-- **The adaptive pilot and the Corridor B conflict rule are designed but not built**, so the slip model
-  and the single-lane contention are described rather than demonstrated.
+- **Dispatches are handled one at a time.** Robots never contend for the single-lane corridor, because
+  one verified order is committed before the next begins and robots move discretely to their
+  destination rather than stepping along the route.
+- **Routing is deterministic while perception assumes slips.** The planner treats every move as
+  succeeding; the Lab 2 transition model does not. That mismatch is why the belief spreads more than
+  the simulated robot actually wanders.
 - **Offline replay is scripted.** It exercises the real gates, the real solver and the real planner, but
   the coordinator's decisions are fixed. It is evidence that the checking works, not that the live model
   behaves well.

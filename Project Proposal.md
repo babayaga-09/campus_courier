@@ -77,20 +77,22 @@ means the route A* returns is still the shortest one. That matters more here tha
 because battery is spent per step, so the battery constraint above is only meaningful if the step
 count it is given is the true one.
 
-The mopped floor makes movement stochastic, and I think that makes the pilot an MDP rather than a
-search problem. The states are cells, the actions are the four moves, and the transition
-probabilities are the 80/10/10 slip. I plan to solve it with value iteration, as in Lab 3, to get a
-careful policy, and then train a Q-learning policy on a reward that pays for speed. The pilot can
-then be switched between careful and fast, and the difference should be visible on the map.
+The mopped floor is where movement stops being deterministic, and that distinction matters for how I
+read my own system. Routing is deterministic shortest path, so the planner assumes a move goes where it
+was aimed. The slip only appears in perception, where the Lab 2 transition model spreads the belief
+sideways on every step. So the accurate description is that the system plans deterministically and
+tracks probabilistically, and those two models do not agree with each other.
 
 ## Where does conflict happen?
 
-Conflict happens in Corridor B, which is single lane and is the only way into Studio 3. When two
-robots arrive at it together, each has to choose go or yield. If both go they block each other, and
-if both yield the class ends up waiting for no reason. Rather than hard coding something like "Atlas
-always wins", I would like the robots to learn a right of way convention by playing this game against
-each other, using self play Q-learning, with the more urgent delivery taking priority and remaining
-battery as the tie break.
+Conflict happens in Corridor B, which is single lane and is the only way into Studio 3. Two robots that
+needed it at the same moment would block each other, and the geometry of the floor makes that a real
+possibility rather than a hypothetical one.
+
+What this version does about it is nothing, and I would rather say that than imply otherwise. Orders are
+verified and committed one at a time, and the simulation moves a robot discretely to its destination
+instead of stepping it along the corridor, so two robots never actually contend for it. The verifier
+reasons about who carries what, not about who goes first.
 
 ## What does the system remember?
 
@@ -121,7 +123,8 @@ GPS, so the noisy sensor and the filter are doing real work. A quiet zone outsid
 hard constraint, and it is not the kind of thing that should depend on a model's judgement, which is
 what the SMT verifier is for. A single lane corridor is a real bottleneck, so the conflict rule has
 something to resolve. And a delivery has a deadline, so "careful but late" and "fast but stuck" are
-both wrong answers, which is the trade off I want the adaptive pilot to learn.
+both wrong answers, and the floor is laid out so that trade off is visible, even though this version
+does not optimise for it.
 
 ## A note on the verifier
 
@@ -149,8 +152,6 @@ and UI layer.
 | Route planning | Lab 1: `planner.py` (A*), `environment.py`, `models.py` | used unchanged |
 | Perception | Lab 2: `hmm_filter.py`, `hmm_environment.py` | my completed Lab 2 submission, used as submitted. It passes the lab's own `hmm_test.py`. `hmm_environment.py` needed a whitespace fix before it would import |
 | Safety verifier | SMT lab: `verifier.py` | two corrections. Task 0's capacity direction (`>=` to `<=`) and Task 4's battery drain constraint, which the lab leaves as a TODO |
-| Adaptive pilot | Lab 3 value iteration, and the Q-learning lab | planned |
-| Corridor B conflict | Q-learning lab, run as self play | planned |
 | LLM coordinator | ReAct lab: `react_loop_lab.py` | loop adapted to this project's tools |
 | Memory | ReAct lab: the `fake_db.py` pattern | adapted to SQLite for this project |
 | Dashboard, map and scenario | new work | this is where I used LLM assistance, as the guidelines allow for integration and UI |
