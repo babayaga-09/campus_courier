@@ -16,8 +16,8 @@ gates in code decide whether that plan is allowed to happen.
 ## Install and run
 
 ```bash
-git clone https://github.com/AgentsDecisionMaking-Krea/Comp-343-2026-s006.git
-cd Comp-343-2026-s006/FinalProject-CampusCourier
+git clone https://github.com/babayaga-09/campus_courier.git
+cd campus_courier
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
@@ -220,4 +220,7 @@ Safety considerations:
 
 ## Repository
 
-**GitHub:** <https://github.com/AgentsDecisionMaking-Krea/Comp-343-2026-s006/tree/main/FinalProject-CampusCourier>
+**GitHub:** <https://github.com/babayaga-09/campus_courier>
+
+Also mirrored in my course repository at
+<https://github.com/AgentsDecisionMaking-Krea/Comp-343-2026-s006/tree/main/FinalProject-CampusCourier>.
