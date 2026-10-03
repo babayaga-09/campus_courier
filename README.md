@@ -185,8 +185,6 @@ trap (not dispatched, one Z3 UNSAT, which is the correct outcome).
 
 ## Limitations and safety considerations
 
-<!-- TODO: your own honest note goes here before submitting -->
-
 Known limitations in this version:
 
 - **The filter tracks loosely, which is the honest result.** A wall count from 0 to 4 is weak evidence in

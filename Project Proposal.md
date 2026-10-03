@@ -147,7 +147,7 @@ and UI layer.
 | Layer | Coursework reused | State |
 |---|---|---|
 | Route planning | Lab 1: `planner.py` (A*), `environment.py`, `models.py` | used unchanged |
-| Perception | Lab 2: `hmm_filter.py`, `hmm_environment.py` | `hmm_environment.py` needed a whitespace fix before it would import. `predict()` and `update()` are the lab's own TODOs and are still to be completed |
+| Perception | Lab 2: `hmm_filter.py`, `hmm_environment.py` | my completed Lab 2 submission, used as submitted. It passes the lab's own `hmm_test.py`. `hmm_environment.py` needed a whitespace fix before it would import |
 | Safety verifier | SMT lab: `verifier.py` | two corrections. Task 0's capacity direction (`>=` to `<=`) and Task 4's battery drain constraint, which the lab leaves as a TODO |
 | Adaptive pilot | Lab 3 value iteration, and the Q-learning lab | planned |
 | Corridor B conflict | Q-learning lab, run as self play | planned |
